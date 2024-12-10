@@ -43,7 +43,7 @@ router.post("/api/user/register",
 
         } catch (error) {
             console.log("Error during registration: ", error)   
-            res.status(500).json({message: "Server error"})
+            res.status(500).json({message: "Server error", error: error})
         }
 
     
