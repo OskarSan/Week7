@@ -39,8 +39,9 @@ router.post("/api/user/register",
 
             await User.create(user)
             
-            res.json(user)
-
+            res.json(user)  
+            return 
+            
         } catch (error) {
             console.log("Error during registration: ", error)   
             res.status(500).json({message: "Server error", error: error})
