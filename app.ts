@@ -12,7 +12,7 @@ dotenv.config()
 const app: Express = express()
 const port: number = parseInt(process.env.PORT as string) || 3001
 
-const mongoDB : string = "mongodb://localhost:27017/userdb"
+const mongoDB : string = "mongodb://127.0.0.1:27017/userdb"
 mongoose.connect(mongoDB)
 mongoose.Promise = global.Promise
 
