@@ -13,6 +13,7 @@ router.post("/api/user/register",
     body('password').isLength({min: 5}).escape(),
     async (req: Request, res: Response) => {
         const errors: Result<ValidationError> = validationResult(req)
+        
         if (!errors.isEmpty()) {
             console.log(errors)
             res.status(400).json({errors: errors.array()})
@@ -24,7 +25,7 @@ router.post("/api/user/register",
             console.log(existingUser)
 
             if (existingUser) {
-                res.status(403).json({message: "User already exists"})
+                res.status(203).json({message: "User already exists"})
                 return
             }
             const salt : string = bcrypt.genSaltSync(10)
