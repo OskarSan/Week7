@@ -9,7 +9,8 @@ const router: Router = Router()
 
 
 router.post("/api/user/register", 
-    body('email').isEmail().escape(),
+    body('email').escape(),
+    //.isEmail(),
     body('password').isLength({min: 5}).escape(),
     async (req: Request, res: Response) => {
         const errors: Result<ValidationError> = validationResult(req)
