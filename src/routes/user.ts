@@ -38,8 +38,8 @@ router.post("/api/user/register",
             }
 
             await User.create(user)
-            
-            res.status(201).json(user)  
+            console.log("User created: ", user)
+            res.status(201).json({user})  
             
             
         } catch (error) {
