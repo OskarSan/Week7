@@ -17,7 +17,7 @@ router.post("/api/user/register",
         
         if (!errors.isEmpty()) {
             console.log(errors)
-            res.status(200).json({errors: errors.array()})
+            res.status(400).json({errors: errors.array()})
             return
         }
         
@@ -44,7 +44,8 @@ router.post("/api/user/register",
             
         } catch (error) {
             console.log("Error during registration: ", error)   
-            res.status(500).json({message: "Server error", error: error})
+            const errorMessage = (error instanceof Error) ? error.message : 'Unknown error';
+            res.status(500).json({message: "Server error", error: errorMessage})
         }
 
     
