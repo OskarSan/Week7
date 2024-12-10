@@ -1,0 +1,32 @@
+import express, {Express} from "express"
+import path from "path"
+
+import userRouter from "./src/routes/user"
+import morgan from "morgan"
+import mongoose, { Connection } from 'mongoose'
+import dotenv from "dotenv"
+
+
+dotenv.config()
+
+const app: Express = express()
+const port: number = parseInt(process.env.PORT as string) || 3001
+
+const mongoDB : string = "mongodb://localhost:27017/userdb"
+mongoose.connect(mongoDB)
+mongoose.Promise = global.Promise
+
+const db: Connection = mongoose.connection
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
+app.use(morgan('dev'))
+
+app.use(express.static(path.join(__dirname, '../public')))
+app.use("/", userRouter)
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`)
+})
