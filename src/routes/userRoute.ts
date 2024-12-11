@@ -47,7 +47,7 @@ router.post("/api/user/register",
             userList.push(user)
             console.log("User added to list: ", user)
 
-            res.status(201).json(user)
+            res.status(200).json(user)
         } catch (error) {
             console.log("Error during registration: ", error)   
             const errorMessage = (error instanceof Error) ? error.message : 'Unknown error'
