@@ -24,6 +24,6 @@ export const validateToken = (req: CustomRequest, res: Response, next: NextFunct
 
     } catch (error) {
         console.error(`Error during token validation: ${error}`);
-        res.status(400).json({ message: "Invalid token" });
+        res.status(401).json({ message: "Invalid token" });
     }
 }
