@@ -3,7 +3,8 @@ import { body, Result, ValidationError, validationResult } from 'express-validat
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { User, IUser } from '../models/User'
-//import { validateToken } from '../middleware/validateToken'
+import { validateToken } from '../middleware/validateToken'
+
 
 const router: Router = Router()
 
@@ -103,6 +104,16 @@ router.post("/api/user/login",
     }
 
 )
+
+
+router.get("/api/private", validateToken, async (req: Request, res: Response)=> {
+    try {
+        res.status(200).json({ message: "This is a protected secure route!" })
+    } catch(error: any) {
+        console.log("Error during fetching users: ", error)
+        res.status(500).json({ message: "Server error" })
+    }
+})
 
 
 
