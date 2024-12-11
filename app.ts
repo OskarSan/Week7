@@ -1,7 +1,7 @@
 import express, {Express} from "express"
 import path from "path"
 
-import userRouter from "./src/routes/user"
+import userRouter from "./src/routes/userRoute"
 import morgan from "morgan"
 import mongoose, { Connection } from 'mongoose'
 import dotenv from "dotenv"
