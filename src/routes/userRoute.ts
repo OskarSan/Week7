@@ -20,7 +20,7 @@ router.post("/api/user/register",
             res.status(400).json({ errors: errors.array() })
             return
         }
-        
+        console.log(req.body, "vituiks")
         try {
             const existingUser: Partial<IUser> | undefined = userList.find(user => user.email === req.body.email)
             console.log(existingUser)
