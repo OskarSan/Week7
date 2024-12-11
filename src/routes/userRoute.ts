@@ -1,19 +1,23 @@
-import { Request, Response, Router } from 'express'
+import { Router, Request, Response } from 'express'
 import { body, Result, ValidationError, validationResult } from 'express-validator'
 import bcrypt from 'bcrypt'
 import jwt, { JwtPayload } from 'jsonwebtoken'
-import { User, IUser } from '../models/User'
-import { validateToken } from '../middleware/validateToken'
 
+import { validateToken } from '../middleware/validateToken'
 
 const router: Router = Router()
 
-const userList: Partial<IUser>[] = []
+type IUser ={
+    email: string
+    password: string
+}
+
+const userList: IUser[] = []
 
 router.post("/api/user/register", 
     body('email').escape(),
     body('password').escape(),
-    async (req: Request, res: Response) => {
+    async (req: Request, res: Response): Promise<void> => {
         const errors: Result<ValidationError> = validationResult(req)
         
         if (!errors.isEmpty()) {
@@ -21,9 +25,9 @@ router.post("/api/user/register",
             res.status(400).json({ errors: errors.array() })
             return
         }
-        console.log(req.body, "vituiks")
+        
         try {
-            const existingUser: Partial<IUser> | undefined = userList.find(user => user.email === req.body.email)
+            const existingUser: IUser | undefined = userList.find(user => user.email === req.body.email)
             console.log(existingUser)
 
             if (existingUser) {
@@ -34,16 +38,16 @@ router.post("/api/user/register",
             const salt: string = bcrypt.genSaltSync(10)
             const hashedPassword: string = bcrypt.hashSync(req.body.password, salt)
             
-            const user: Partial<IUser> = {
+            const user: IUser = {
                 email: req.body.email,
                 password: hashedPassword
             }
 
+
             userList.push(user)
             console.log("User added to list: ", user)
 
-            res.status(200).json(user)
-
+            res.status(201).json(user)
         } catch (error) {
             console.log("Error during registration: ", error)   
             const errorMessage = (error instanceof Error) ? error.message : 'Unknown error'
@@ -52,9 +56,7 @@ router.post("/api/user/register",
     }
 )
 
-
-
-router.get("/api/user/list", (req: Request, res: Response) => {
+router.get("/api/user/list", (req: Request, res: Response): void => {
     try {
         res.json(userList)
     } catch (error) {
@@ -63,11 +65,10 @@ router.get("/api/user/list", (req: Request, res: Response) => {
     }
 })
 
-
 router.post("/api/user/login", 
     body("email").escape(), 
     body("password").escape(), 
-    async (req: Request, res: Response) => {
+    async (req: Request, res: Response): Promise<void> => {
         const errors: Result<ValidationError> = validationResult(req)
         
         if (!errors.isEmpty()) {
@@ -77,7 +78,7 @@ router.post("/api/user/login",
         }
 
         try {
-            const user: Partial<IUser> | undefined = userList.find(user => user.email === req.body.email)
+            const user: IUser | undefined = userList.find(user => user.email === req.body.email)
             console.log(user)
 
             if (!user) {
@@ -85,36 +86,32 @@ router.post("/api/user/login",
                 return
             }
 
-            if (bcrypt.compareSync(req.body.password, user.password as string)) {
-
+            if (bcrypt.compareSync(req.body.password, user.password)) {
                 const jwtPayload: JwtPayload = {
                     email: user.email,
                     password: user.password
                 }
-
-                const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {expiresIn: '2m'})
+                const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, { expiresIn: '2m' })
                 res.status(200).json({ success: true, token: token })
                 return
+            } else {
+                res.status(403).json({ message: "Invalid credentials" })
             }
-        }  catch(error: any) {
+        } catch (error: any) {
             console.error(`Error during user login: ${error}`)
             res.status(500).json({ error: 'Internal Server Error' })
             return 
         }
     }
-
 )
 
-
-router.get("/api/private", validateToken, async (req: Request, res: Response)=> {
+router.get("/api/private", validateToken, async (req: Request, res: Response): Promise<void> => {
     try {
         res.status(200).json({ message: "This is protected secure route!" })
-    } catch(error: any) {
+    } catch (error: any) {
         console.log("Error during fetching users: ", error)
         res.status(500).json({ message: "Server error" })
     }
 })
-
-
 
 export default router
