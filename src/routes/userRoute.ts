@@ -63,6 +63,47 @@ router.get("/api/user/list", (req: Request, res: Response) => {
 })
 
 
+router.post("/api/user/login", 
+    body("email").escape(), 
+    body("password").escape(), 
+    async (req: Request, res: Response) => {
+        const errors: Result<ValidationError> = validationResult(req)
+        
+        if (!errors.isEmpty()) {
+            console.log(errors)
+            res.status(400).json({ errors: errors.array() })
+            return
+        }
+
+        try {
+            const user: Partial<IUser> | undefined = userList.find(user => user.email === req.body.email)
+            console.log(user)
+
+            if (!user) {
+                res.status(403).json({ message: "User not found" })
+                return
+            }
+
+            if (bcrypt.compareSync(req.body.password, user.password as string)) {
+
+                const jwtPayload: JwtPayload = {
+                    email: user.email,
+                    password: user.password
+                }
+
+                const token: string = jwt.sign(jwtPayload, process.env.SECRET as string, {expiresIn: '2m'})
+                res.status(200).json({ success: true, token: token })
+                return
+            }
+        }  catch(error: any) {
+            console.error(`Error during user login: ${error}`)
+            res.status(500).json({ error: 'Internal Server Error' })
+            return 
+        }
+    }
+
+)
+
 
 
 export default router
