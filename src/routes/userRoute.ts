@@ -114,4 +114,9 @@ router.get("/api/private", validateToken, async (req: Request, res: Response): P
     }
 })
 
+
+router.get('/', (req, res) => {
+   
+});
+
 export default router
