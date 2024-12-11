@@ -35,7 +35,7 @@ const fetchData = async (e) => {
             if (data.token){
                 console.log('Login successful');
                 localStorage.setItem('token', data.token);
-                window.location.href = '/index.html';
+                window.location.href = '/';
             }else{
                 console.log('Invalid username or password');
             }
