@@ -17,9 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = '/index.html';
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            window.location.href = '/login.html';
-        });
+     
     }
 });
